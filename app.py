@@ -16,11 +16,10 @@ from resources.store import blp as StoreBlueprint
 from resources.tag import blp as TagBlueprint
 from resources.user import blp as UserBlueprint
 
-load_dotenv()
-
 
 def create_app(db_url=None):
     app = Flask(__name__)
+    load_dotenv()
 
     app.config["PROPOGATE_EXCEPTIONS"] = True
     app.config["API_TITLE"] = "Stores REST API"

@@ -4,3 +4,4 @@ instance
 .idea
 *.pyc
 .DS_Storw
+.env
