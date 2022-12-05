@@ -1,28 +1,36 @@
+import os
+
+import requests
+from flask import current_app
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from passlib.hash import pbkdf2_sha256
-from flask_jwt_extended import create_access_token, create_refresh_token,jwt_required, get_jwt, get_jwt_identity
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt, get_jwt_identity
 
 from db import db
 from blocklist import BLOCKLIST
 from models import UserModel
-from schemas import UserSchema
-
+from schemas import UserSchema, UserRegisterSchema
+from tasks import send_user_registration_email
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
 
 @blp.route("/register")
 class UserRegister(MethodView):
-    @blp.arguments(UserSchema)
+    @blp.arguments(UserRegisterSchema)
     def post(self, user_data):
         user = UserModel(username=user_data["username"],
+                         email=user_data["email"],
                          password=pbkdf2_sha256.hash(user_data["password"]))
 
         try:
             db.session.add(user)
             db.session.commit()
+
+            current_app.queue.enqueue(send_user_registration_email, user.email, user.username)
+
         except IntegrityError:
             abort(400, message="A user with that name already exists.")
         except SQLAlchemyError:
@@ -77,5 +85,3 @@ class User(MethodView):
         db.session.delete(user)
         db.session.commit()
         return {"message": "User deleted."}, 200
-
-
