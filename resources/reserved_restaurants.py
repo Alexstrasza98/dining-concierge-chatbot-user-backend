@@ -26,5 +26,6 @@ class ReservedRestaurant(MethodView):
 
         return {"message": "A reservation has been created."}, 201
 
+    @blp.response(200, ReservedRestaurantSchema(many=True))
     def get(self):
-        ReservedRestaurant.query.all()
+        return ReservedRestaurantModel.query.all()

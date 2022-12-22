@@ -25,5 +25,6 @@ class SavedRestaurant(MethodView):
 
         return {"message": "A restaurant has been saved."}, 201
 
+    @blp.response(200, SavedRestaurantSchema(many=True))
     def get(self):
-        return SavedRestaurant.query.all()
+        return SavedRestaurantModel.query.all()
