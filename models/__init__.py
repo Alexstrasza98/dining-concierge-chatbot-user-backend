@@ -1,2 +1,3 @@
 from models.user import UserModel
 from models.saved_restaurant import SavedRestaurantModel
+from models.reserved_restaurants import ReservedRestaurantModel

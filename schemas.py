@@ -21,3 +21,15 @@ class SavedRestaurantSchema(Schema):
     price = fields.Str()
     image_url = fields.Str(required=True)
     yelp_url = fields.Str(required=True)
+
+
+class ReservedRestaurantSchema(Schema):
+    id = fields.Integer(dump_only=True)
+    businessId = fields.Str(required=True)
+    name = fields.Str(required=True)
+    location = fields.Str(required=True)
+    image_url = fields.Str(required=True)
+    yelp_url = fields.Str(required=True)
+
+    people = fields.Int(required=True)
+    dt = fields.DateTime(required=True)
