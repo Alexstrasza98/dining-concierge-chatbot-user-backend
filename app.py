@@ -14,6 +14,7 @@ from blocklist import BLOCKLIST
 from db import db
 from resources.user import blp as UserBlueprint
 from resources.saved_restaurant import blp as SavedRestaurantBlueprint
+from resources.reserved_restaurants import blp as ReservedRestaurantBlueprint
 
 
 def create_app(db_url=None):
@@ -88,6 +89,7 @@ def create_app(db_url=None):
 
     api.register_blueprint(UserBlueprint)
     api.register_blueprint(SavedRestaurantBlueprint)
+    api.register_blueprint(ReservedRestaurantBlueprint)
 
     @app.get("/health")
     def health_check():
