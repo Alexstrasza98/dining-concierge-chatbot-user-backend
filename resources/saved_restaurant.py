@@ -1,7 +1,7 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from schemas import SavedRestaurantSchema
-from models.saved_restaurant import SavedRestaurantModel
+from models import SavedRestaurantModel
 from db import db
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
@@ -23,4 +23,8 @@ class SavedRestaurant(MethodView):
         except SQLAlchemyError:
             abort(500, message="An error occurred while creating a restaurant.")
 
-        return {"message": "A restaurant has been already saved."}, 201
+        return {"message": "A restaurant has been saved."}, 201
+
+    @blp.response(200, SavedRestaurantSchema(many=True))
+    def get(self):
+        return SavedRestaurantModel.query.all()
