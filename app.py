@@ -1,8 +1,10 @@
 import os
 import redis
+from datetime import datetime
+import json
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify
+from flask import Flask, jsonify, Response
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_smorest import Api
@@ -10,18 +12,14 @@ from rq import Queue
 
 from blocklist import BLOCKLIST
 from db import db
-from resources.item import blp as ItemBlueprint
-from resources.store import blp as StoreBlueprint
-from resources.tag import blp as TagBlueprint
 from resources.user import blp as UserBlueprint
+from resources.saved_restaurant import blp as SavedRestaurantBlueprint
 
 
 def create_app(db_url=None):
     app = Flask(__name__)
     load_dotenv()
 
-    connection=redis.from_url(os.getenv("REDIS_URL"))
-    app.queue = Queue("emails", connection=connection)
     app.config["PROPOGATE_EXCEPTIONS"] = True
     app.config["API_TITLE"] = "Stores REST API"
     app.config["API_VERSION"] = "v1"
@@ -88,9 +86,20 @@ def create_app(db_url=None):
             401
         )
 
-    api.register_blueprint(ItemBlueprint)
-    api.register_blueprint(StoreBlueprint)
-    api.register_blueprint(TagBlueprint)
     api.register_blueprint(UserBlueprint)
+    api.register_blueprint(SavedRestaurantBlueprint)
+
+    @app.get("/health")
+    def health_check():
+        t = str(datetime.now())
+        msg = {
+            "name": "COMS6156-Cloud-Computing Yelp API Microservice",
+            "health": "Good",
+            "at time": t
+        }
+
+        result = Response(json.dumps(msg), status=200, content_type="application/json")
+
+        return result
 
     return app
