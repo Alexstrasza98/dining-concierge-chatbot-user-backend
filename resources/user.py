@@ -1,7 +1,6 @@
 import os
 
 import requests
-from flask import current_app
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
@@ -12,7 +11,6 @@ from db import db
 from blocklist import BLOCKLIST
 from models import UserModel
 from schemas import UserSchema, UserRegisterSchema
-from tasks import send_user_registration_email
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
@@ -28,8 +26,6 @@ class UserRegister(MethodView):
         try:
             db.session.add(user)
             db.session.commit()
-
-            current_app.queue.enqueue(send_user_registration_email, user.email, user.username)
 
         except IntegrityError:
             abort(400, message="A user with that name already exists.")
