@@ -1,5 +1,3 @@
-import json
-
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from schemas import ReservedRestaurantSchema
@@ -30,10 +28,4 @@ class ReservedRestaurant(MethodView):
 
     @blp.response(200, ReservedRestaurantSchema(many=True))
     def get(self):
-        data = ReservedRestaurantModel.query.all()
-        response = blp.response_class(
-            response=json.dumps(data),
-            mimetype="application/json"
-        )
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        return response
+        return ReservedRestaurantModel.query.all()
