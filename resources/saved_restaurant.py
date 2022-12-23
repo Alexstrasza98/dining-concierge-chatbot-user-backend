@@ -1,3 +1,6 @@
+import json
+
+from flask import Response
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from schemas import SavedRestaurantSchema
@@ -27,4 +30,10 @@ class SavedRestaurant(MethodView):
 
     @blp.response(200, SavedRestaurantSchema(many=True))
     def get(self):
-        return SavedRestaurantModel.query.all()
+        data = SavedRestaurantModel.query.all()
+        response = blp.response_class(
+            response=json.dumps(data),
+            mimetype="application/json"
+        )
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
