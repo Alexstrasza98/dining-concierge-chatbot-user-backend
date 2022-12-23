@@ -104,4 +104,9 @@ def create_app(db_url=None):
 
         return result
 
+    @app.after_request
+    def apply_caching(response):
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
+
     return app
